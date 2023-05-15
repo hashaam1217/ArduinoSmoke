@@ -1,8 +1,7 @@
-// C++ code
-//
+//This code was written by Hashaam Zafar
+
 #include <Adafruit_LiquidCrystal.h>
 
-int seconds = 0;
 int placeholder = 0; 
 int SAMPLING_TIME = 10;
 int state = 0;
@@ -26,7 +25,8 @@ void setup()
   lcd_1.print("Testing Alarm");
   
   Serial.begin(9600);
-  
+
+  //Sets up pins  
   pinMode(MOTOR_PIN, 	OUTPUT);
   pinMode(SPEAKER_PIN, 	OUTPUT);
   pinMode(DETECTOR_PIN, OUTPUT);
@@ -35,13 +35,16 @@ void setup()
 
 void loop()
 {
-  //Serial.println(SIGNAL_AVERAGE());
   int signal = SIGNAL_AVERAGE();
+
   if (signal > 15)
   {
+    
     lcd_1.setCursor(0, 0);
-  	lcd_1.print("WARNING - HAZARD");
+    lcd_1.print("WARNING - HAZARD");
+    
     ALARM();
+    
     if (state == 0)
     {
       FAN(1);
@@ -52,8 +55,10 @@ void loop()
   else if (signal > 10)
   {
     lcd_1.setCursor(0, 0);
-  	lcd_1.print("Smoke   detected");
+    lcd_1.print("Smoke   detected");
+    
     ALARM();
+    
     if (state == 0)
     {
       FAN(1);
@@ -64,7 +69,7 @@ void loop()
   else if (signal > 7)
   {
     lcd_1.setCursor(0, 0);
-  	lcd_1.print("Smoke   detected");
+    lcd_1.print("Smoke   detected");
     
     if (state == 1)
     {
@@ -76,7 +81,7 @@ void loop()
   else
   {
     lcd_1.setCursor(0, 0);
-  	lcd_1.print("The air is clear");
+    lcd_1.print("The air is clear");
     
     if (state == 1)
     {
@@ -86,29 +91,40 @@ void loop()
   }
 }
 
+
+/*
+Function name: 	FAN
+Purpose: 	Turns on or off fan, and displays the change.
+Parameters: 	Takes an integer as an input for the fan to be turned on or off
+*/
 void FAN(int state)
 {
   switch(state)
   {
     case 0:
       lcd_1.setCursor(0, 1);
-  	  lcd_1.print("Turning Fan OFF");
+      lcd_1.print("Turning Fan OFF");
       analogWrite(MOTOR_PIN, 255);
       break;
     
     case 1: 
       lcd_1.setCursor(0, 1);
-  	  lcd_1.print("Turning Fan  ON");
+      lcd_1.print("Turning Fan  ON");
       analogWrite(MOTOR_PIN, 0);
       break; 
     
     default:
       lcd_1.setCursor(0, 1);
-  	  lcd_1.print("FAN ERROR");
-	  break;
+      lcd_1.print("FAN ERROR");
+      break;
   }
 }
 
+/*
+Function name: 	ALARM
+Purpose: 	Turns the alarm on for a few seconds
+Parameters: 	NULL
+*/
 void ALARM()
 {
   tone(SPEAKER_PIN,1000);
@@ -116,7 +132,12 @@ void ALARM()
   noTone(SPEAKER_PIN);
   delay(1000);
 }
-  
+
+/*
+Function name: 	SIGNAL_AVERAGE
+Purpose: 	Averages the signal for the assigned "Sample time "
+Parameters: 	NULL
+*/
 int SIGNAL_AVERAGE()
 {
   int sum = 0;
@@ -130,13 +151,3 @@ int SIGNAL_AVERAGE()
 }
   
   
-  
-/*
-  lcd_1.setCursor(0, 1);
-  lcd_1.print(seconds);
-  lcd_1.setBacklight(1);
-  delay(500); // Wait for 500 millisecond(s)
-  lcd_1.setBacklight(0);
-  delay(500); // Wait for 500 millisecond(s)
-  seconds += 1;
-*/
